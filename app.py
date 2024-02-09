@@ -42,5 +42,5 @@ def retrieve_leads():
         return 'Failed to retrieve leads', 500
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5055))
-    app.run(debug=True, port=port)
+    port = int(os.environ.get('PORT', 5055))  # Default to 5000 if PORT not in environment
+    app.run(debug=False, host='0.0.0.0', port=port)
