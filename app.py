@@ -30,10 +30,13 @@ def webhook():
                 return challenge, 200
             else:
                 return 'Verification failed', 403
+    else:
 
         # Handle webhook events
         data = request.json
         print(data)  # For debugging
+        # Save incoming JSON object details to the database
+        db.insert({'lead_calls': data})
         
         # Extract leadgen_id from the webhook data
         for entry in data.get('entry', []):
