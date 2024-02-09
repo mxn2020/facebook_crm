@@ -5,27 +5,28 @@ from tinydb import TinyDB, Query
 app = Flask(__name__)
 db = TinyDB('db.json')
 
-VERIFY_TOKEN = 'YOUR_VERIFY_TOKEN'  # Replace with your verify token
+VERIFY_TOKEN = 'my_secure_verify_token'  # Replace with your verify token
 PAGE_ACCESS_TOKEN = 'YOUR_PAGE_ACCESS_TOKEN'  # Replace with your page access token
 FORM_ID = 'YOUR_FORM_ID'  # Replace with your form ID
 
 @app.route('/webhook', methods=['GET', 'POST'])
 def webhook():
     if request.method == 'GET':
+        # Facebook webhook verification
         mode = request.args.get('hub.mode')
         token = request.args.get('hub.verify_token')
         challenge = request.args.get('hub.challenge')
         if mode and token:
-            if mode == 'subscribe' and token == VERIFY_TOKEN:
-                print("WEBHOOK_VERIFIED")
-                return challenge, 200
+            if mode == 'subscribe' and token == 'my_secure_verify_token':
+                return challenge, 200  # Respond with the challenge token
             else:
                 return 'Verification failed', 403
     else:
+        # Handle webhook events
         data = request.json
-        print(data)  # Log webhook data for debugging
-        # Process the webhook data as needed
-        return 'EVENT_RECEIVED', 200
+        print(data)  # Process the webhook data as needed
+        return 'Success', 200
+
 
 @app.route('/retrieve-leads', methods=['GET'])
 def retrieve_leads():
