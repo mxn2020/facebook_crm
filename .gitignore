@@ -4,6 +4,7 @@ db.json
 lead_db.json
 data_forms.json
 test*
+test/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
