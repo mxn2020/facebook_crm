@@ -2,14 +2,20 @@ import os
 from flask import Flask, request, jsonify
 import requests
 from tinydb import TinyDB, Query
+from dotenv import load_dotenv
 
 app = Flask(__name__)
-db = TinyDB('db.json')
+db = TinyDB('lead_db.json')
 
-VERIFY_TOKEN = 'my_secure_verify_token'  # Replace with your verify token
-PAGE_ACCESS_TOKEN = 'EAAMwrnrznv0BOZC2ZBAmo0FBOcCXOnOX1fzU7Y7tJmTSrGcAD7TqwaX6xgZCyzSWvFenOzAD97xn9HSC5XkEkBKDryWIEXcN48EZB1m3XTqt2SFjzAG0PszyY1YBCJqMe9gcsyufYUrLSHEdLBEcbqFEoFuDzRizc1h8sNlhrqirr8UwfkI52gxNwDwBSGkCQfdmQvmXZCZCji3kQBVEBG8vS92DyI5l81fQZDZD'  
-FORM_ID = 'YOUR_FORM_ID'  # Replace with your form ID
-PAGE_ID = '162799146928074'
+load_dotenv()
+
+# Use environment variables
+VERIFY_TOKEN = os.getenv('VERIFY_TOKEN')
+PAGE_ACCESS_TOKEN = os.getenv('PAGE_ACCESS_TOKEN')
+APP_SECRET = os.getenv('APP_SECRET')
+APP_ID = os.getenv('APP_ID')
+FORM_ID = os.getenv('FORM_ID')
+PAGE_ID = os.getenv('PAGE_ID')
 
 
 @app.route('/webhook', methods=['GET', 'POST'])
