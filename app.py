@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, jsonify
 import requests
 from tinydb import TinyDB, Query
@@ -17,7 +18,7 @@ def webhook():
         token = request.args.get('hub.verify_token')
         challenge = request.args.get('hub.challenge')
         if mode and token:
-            if mode == 'subscribe' and token == 'my_secure_verify_token':
+            if mode == 'subscribe' and token == VERIFY_TOKEN:
                 return challenge, 200  # Respond with the challenge token
             else:
                 return 'Verification failed', 403
@@ -41,4 +42,5 @@ def retrieve_leads():
         return 'Failed to retrieve leads', 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5055))
+    app.run(debug=True, port=port)
