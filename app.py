@@ -69,7 +69,7 @@ def get_lead_details(lead_id, access_token):
 @app.route('/items', methods=['GET'])
 def get_items():
     # Fetch all items stored in the database
-    items = db.all()
+    items = db.find_all()
     return jsonify(items), 200
 
 @app.route('/retrieve-leads', methods=['GET'])
@@ -79,7 +79,7 @@ def retrieve_leads():
     if response.status_code == 200:
         leads = response.json()['data']
         for lead in leads:
-            db.insert(lead)
+            db.insert({'retrieve-leads':lead})
         return jsonify(leads), 200
     else:
         return 'Failed to retrieve leads', 500
