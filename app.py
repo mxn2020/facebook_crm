@@ -4,8 +4,11 @@ import requests
 from tinydb import TinyDB, Query
 from dotenv import load_dotenv
 
+from db_connector import get_database_client
+
 app = Flask(__name__)
-db = TinyDB('lead_db.json')
+# db = TinyDB('lead_db.json')
+db = get_database_client()
 
 load_dotenv()
 
@@ -20,8 +23,10 @@ PAGE_ID = os.getenv('PAGE_ID')
 
 @app.route('/webhook', methods=['GET', 'POST'])
 def webhook():
+    print("Webhook called")
     if request.method == 'GET':
         # Facebook webhook verification (same as before)
+        print ("GET request")
         mode = request.args.get('hub.mode')
         token = request.args.get('hub.verify_token')
         challenge = request.args.get('hub.challenge')
@@ -31,8 +36,8 @@ def webhook():
             else:
                 return 'Verification failed', 403
     else:
-
         # Handle webhook events
+        print ("POST request")
         data = request.json
         print(data)  # For debugging
         # Save incoming JSON object details to the database
