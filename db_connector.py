@@ -87,7 +87,8 @@ class MongoDBClient(DatabaseInterface):
     def insert(self, data):
         try:
             result = self.collection.insert_one(data)
-            return result.inserted_id
+            print ("result.inserted_id: ", result.inserted_id)
+            print ("result: ", result)
         except PyMongoError as e:
             print(f"Insert operation failed: {e}")
             return None

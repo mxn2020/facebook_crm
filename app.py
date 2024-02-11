@@ -17,7 +17,6 @@ class CustomJSONEncoder(FlaskJSONEncoder):
     
     
 app = Flask(__name__)
-# db = TinyDB('lead_db.json')
 db = get_database_client()
 app.json_encoder = CustomJSONEncoder
 
