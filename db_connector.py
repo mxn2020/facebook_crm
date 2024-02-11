@@ -85,6 +85,8 @@ class MongoDBClient(DatabaseInterface):
         self.collection = self.db[collection_name]
 
     def insert(self, data):
+        print ("data: ", data)
+        print ("Inserting data into MongoDB")
         try:
             result = self.collection.insert_one(data)
             print ("result.inserted_id: ", result.inserted_id)
