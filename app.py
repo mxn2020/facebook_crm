@@ -106,6 +106,7 @@ def get_lead_details(lead_id, access_token):
 def get_items():
     items = db.find_all()
     # Convert ObjectId to str for each item
+    print ("items: ", items)
     items = [{**item, '_id': str(item['_id'])} for item in items]
     return jsonify(items), 200
 
