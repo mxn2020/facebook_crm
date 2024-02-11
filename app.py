@@ -1,14 +1,25 @@
+from bson import ObjectId
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, jsonify
 import requests
 from tinydb import TinyDB, Query
 from dotenv import load_dotenv
+from json import JSONEncoder as FlaskJSONEncoder
 
 from db_connector import get_database_client
 
+
+class CustomJSONEncoder(FlaskJSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, ObjectId):
+            return str(obj)
+        return super(CustomJSONEncoder, self).default(obj)
+    
+    
 app = Flask(__name__)
 # db = TinyDB('lead_db.json')
 db = get_database_client()
+app.json_encoder = CustomJSONEncoder
 
 load_dotenv()
 
@@ -21,6 +32,7 @@ FORM_ID = os.getenv('FORM_ID')
 PAGE_ID = os.getenv('PAGE_ID')
 
 
+    
 @app.route('/webhook', methods=['GET', 'POST'])
 def webhook():
     print("Webhook called")
@@ -68,8 +80,9 @@ def get_lead_details(lead_id, access_token):
 
 @app.route('/items', methods=['GET'])
 def get_items():
-    # Fetch all items stored in the database
     items = db.find_all()
+    # Convert ObjectId to str for each item
+    items = [{**item, '_id': str(item['_id'])} for item in items]
     return jsonify(items), 200
 
 @app.route('/retrieve-leads', methods=['GET'])

@@ -8,6 +8,7 @@ load_dotenv()
 
 DATABASE_TYPE = os.getenv('DATABASE_TYPE')
 
+
 class DatabaseInterface:
     def insert(self, data):
         raise NotImplementedError
@@ -75,6 +76,8 @@ class FirestoreClient(DatabaseInterface):
         self.collection.document(doc_id).delete()
 
 from pymongo import MongoClient
+from pymongo.errors import PyMongoError
+
 class MongoDBClient(DatabaseInterface):
     def __init__(self, db_name, collection_name, db_uri="mongodb://localhost:27017/"):
         self.client = MongoClient(db_uri)
@@ -82,19 +85,44 @@ class MongoDBClient(DatabaseInterface):
         self.collection = self.db[collection_name]
 
     def insert(self, data):
-        return self.collection.insert_one(data).inserted_id
+        try:
+            result = self.collection.insert_one(data)
+            return result.inserted_id
+        except PyMongoError as e:
+            print(f"Insert operation failed: {e}")
+            return None
 
     def find_all(self):
-        return list(self.collection.find())
+        try:
+            # Retrieve all documents from the collection
+            return list(self.collection.find())
+        except PyMongoError as e:
+            print(f"Find all operation failed: {e}")
+            return []
 
     def find(self, query):
-        return list(self.collection.find(query))
+        try:
+            return list(self.collection.find(query))
+        except PyMongoError as e:
+            print(f"Find operation failed: {e}")
+            return []
 
     def update(self, query, update_data):
-        return self.collection.update_many(query, {'$set': update_data})
+        try:
+            result = self.collection.update_many(query, {'$set': update_data})
+            return result.modified_count  # Returns the number of documents modified
+        except PyMongoError as e:
+            print(f"Update operation failed: {e}")
+            return 0
 
     def delete(self, query):
-        return self.collection.delete_many(query)
+        try:
+            result = self.collection.delete_many(query)
+            return result.deleted_count  # Returns the number of documents deleted
+        except PyMongoError as e:
+            print(f"Delete operation failed: {e}")
+            return 0
+
 
 
 def get_database_client():
@@ -103,7 +131,7 @@ def get_database_client():
     elif DATABASE_TYPE == 'firestore':
         return FirestoreClient('your_collection_name')
     elif DATABASE_TYPE == 'mongodb':
-        return MongoDBClient('your_db_name', 'your_collection_name', os.getenv('MONGODB_URI'))
+        return MongoDBClient('facebook_crm', 'leads', os.getenv('MONGODB_URI'))
     else:
         raise ValueError(f"Unsupported database type: {DATABASE_TYPE}")
 
