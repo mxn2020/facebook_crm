@@ -53,6 +53,30 @@ def webhook():
         data = request.json
         print(data)  # For debugging
         # Save incoming JSON object details to the database
+        db.insert({'leads': data})
+                         
+        return 'Success', 200
+    
+@app.route('/webhook_lead_calls', methods=['GET', 'POST'])
+def webhook_lead_calls():
+    print("Webhook called")
+    if request.method == 'GET':
+        # Facebook webhook verification (same as before)
+        print ("GET request")
+        mode = request.args.get('hub.mode')
+        token = request.args.get('hub.verify_token')
+        challenge = request.args.get('hub.challenge')
+        if mode and token:
+            if mode == 'subscribe' and token == VERIFY_TOKEN:
+                return challenge, 200
+            else:
+                return 'Verification failed', 403
+    else:
+        # Handle webhook events
+        print ("POST request")
+        data = request.json
+        print(data)  # For debugging
+        # Save incoming JSON object details to the database
         db.insert({'lead_calls': data})
         
         # Extract leadgen_id from the webhook data
