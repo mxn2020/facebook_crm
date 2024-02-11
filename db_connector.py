@@ -96,6 +96,12 @@ class MongoDBClient(DatabaseInterface):
             return None
 
     def find_all(self):
+        items = self.collection.find()
+        item_list = list(self.collection.find())
+        
+        print ("items in find_all: ", item_list)
+        print ("items: ", items)
+        
         try:
             # Retrieve all documents from the collection
             return list(self.collection.find())
