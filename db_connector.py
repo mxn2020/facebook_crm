@@ -10,6 +10,9 @@ DATABASE_TYPE = os.getenv('DATABASE_TYPE')
 
 
 class DatabaseInterface:
+    def __init__(self, name):
+        self.name = name
+
     def insert(self, data):
         raise NotImplementedError
 
@@ -29,6 +32,7 @@ class DatabaseInterface:
 from tinydb import TinyDB, Query
 class TinyDBClient(DatabaseInterface):
     def __init__(self, db_path):
+        super().__init__("TinyDBClient")
         self.db = TinyDB(db_path)
 
     def insert(self, data):
@@ -54,6 +58,7 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 class FirestoreClient(DatabaseInterface):
     def __init__(self, collection_name):
+        super().__init__("FirestoreClient")
         self.db = firestore.Client()
         self.collection = self.db.collection(collection_name)
 
@@ -80,6 +85,7 @@ from pymongo.errors import PyMongoError
 
 class MongoDBClient(DatabaseInterface):
     def __init__(self, db_name, collection_name, db_uri="mongodb://localhost:27017/"):
+        super().__init__("MongoDBClient")
         self.client = MongoClient(db_uri)
         self.db = self.client[db_name]
         self.collection = self.db[collection_name]

@@ -106,6 +106,8 @@ def get_items():
     items = db.find_all()
     # Convert ObjectId to str for each item
     print ("items: ", items)
+    db_name = db.name
+    print ("db_name: ", db_name)
     items = [{**item, '_id': str(item['_id'])} for item in items]
     return jsonify(items), 200
 
